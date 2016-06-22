@@ -1,0 +1,10 @@
+{
+  "desktop": {
+    "js": "desktop/js/**/*.js",
+    "dist": "dist/desktop/js"
+  },
+  "mobile": {
+    "js": "mobile/js/**/*.js",
+    "dist": "dist/mobile/js"
+  }
+}
