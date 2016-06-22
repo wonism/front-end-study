@@ -1,5 +1,9 @@
 # Gulp
-![](https://github.com/wonism/front-end-study/blob/master/gulp/img/gulp.jpg)
+<p align="center">
+  <a href="http://gulpjs.com">
+    <img height="257" width="114" src="https://github.com/wonism/front-end-study/blob/master/gulp/img/gulp.jpg">
+  </a>
+</p>
 
 ## install
 - OS X 기준
