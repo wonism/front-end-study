@@ -6,7 +6,7 @@ class App extends React.Component {
   }
 
   render() {
-    let text = "React JS";
+    let text = 'React JS';
     let condition = true;
     let pStyle = {
       'background-color': 'gray',
