@@ -135,6 +135,10 @@ class ContactInfo extends React.Component {
     this.props.onSelect(this.props.contactKey);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return (JSON.stringify(nextProps) !== JSON.stringify(this.props));
+  }
+
   render() {
     let getStyle = isSelect => {
       if(!isSelect) return;
@@ -146,6 +150,8 @@ class ContactInfo extends React.Component {
 
       return style;
     }
+
+    console.log('rendered : ' + this.props.name);
 
     return (
       <li style = { getStyle(this.props.isSelected) } onClick = { this.handleClick.bind(this) }>
