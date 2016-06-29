@@ -5,6 +5,7 @@
   </a>
 </p>
 - [VELOPERT](https://velopert.com/)님의 블로그를 보면서 공부+정리한 repository 입니다.
+  - 이외에도 [React JS DOCS](https://facebook.github.io/react/docs/getting-started.html), [Flux DOCS](http://facebook.github.io/flux/docs/overview.html#content), [Redux DOCS](http://redux.js.org/) 등을 참고하였습니다.
 - 문제가 있거나 오타, 다른 의견이 있으면, [issue](https://github.com/wonism/front-end-study/issues/new) 에 등록해주시면 확인하도록 하겠습니다.
 
 ## 개발 환경
@@ -31,6 +32,11 @@ $ npm install --save-dev babel-core babel-loader babel-preset-react babel-preset
 
 ## Examples
 - [간단한 React JS App 만들기](https://github.com/wonism/front-end-study/blob/master/reactjs/chapter/01.simple-react-app.md)
+- [Component 모듈화 하기](https://github.com/wonism/front-end-study/blob/master/reactjs/chapter/02.component.md)
+- [props 와 state](https://github.com/wonism/front-end-study/blob/master/reactjs/chapter/03.props-state.md)
+- [컴퍼넌트의 iteration](https://github.com/wonism/front-end-study/blob/master/reactjs/chapter/04.component-iteration.md)
+- [컴퍼넌트 생명주기](https://github.com/wonism/front-end-study/blob/master/reactjs/chapter/05.component-lifecycle.md)
+- [router](https://github.com/wonism/front-end-study/blob/master/reactjs/chapter/07.router.md)
 
 ## Project 및 설정파일 살펴보기
 - 프로젝트의 대략적인 hierarchy 를 살펴보면 다음과 같다.
