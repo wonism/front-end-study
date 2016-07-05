@@ -60,7 +60,7 @@
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _App = __webpack_require__(192);
+	var _App = __webpack_require__(193);
 
 	var _App2 = _interopRequireDefault(_App);
 
@@ -21968,37 +21968,50 @@
 
 	var _redux = __webpack_require__(175);
 
-	var _actions = __webpack_require__(191);
+	var _todos = __webpack_require__(191);
 
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	var _todos2 = _interopRequireDefault(_todos);
 
-	var SHOW_ALL = _actions.VisibilityFilters.SHOW_ALL;
+	var _visibilityFilter = __webpack_require__(192);
 
+	var _visibilityFilter2 = _interopRequireDefault(_visibilityFilter);
 
-	function visibilityFilter() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? SHOW_ALL : arguments[0];
-	  var action = arguments[1];
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var todoApp = (0, _redux.combineReducers)({
+	  todos: _todos2.default,
+	  visibilityFilter: _visibilityFilter2.default
+	});
+
+	exports.default = todoApp;
+
+	/***** before *****/
+	/*
+	import { combineReducers } from 'redux';
+	import { ADD_TODO, TOGGLE_TODO, SET_VISIBILITY_FILTER, VisibilityFilters } from '../actions';
+	const { SHOW_ALL } = VisibilityFilters;
+
+	function visibilityFilter(state = SHOW_ALL, action) {
 	  switch (action.type) {
-	    case _actions.SET_VISIBILITY_FILTER:
+	    case SET_VISIBILITY_FILTER:
 	      return action.filter;
 	    default:
 	      return state;
 	  }
 	}
 
-	function todos() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-	  var action = arguments[1];
-
+	function todos(state = [], action) {
 	  switch (action.type) {
-	    case _actions.ADD_TODO:
-	      return [].concat(_toConsumableArray(state), [{
-	        text: action.text,
-	        completed: false
-	      }]);
-	    case _actions.TOGGLE_TODO:
-	      return state.map(function (todo, index) {
+	    case ADD_TODO:
+	      return [
+	        ...state,
+	        {
+	          text: action.text,
+	          completed: false
+	        }
+	      ];
+	    case TOGGLE_TODO:
+	      return state.map((todo, index) => {
 	        if (index === action.index) {
 	          return Object.assign({}, todo, {
 	            completed: !todo.completed
@@ -22007,16 +22020,17 @@
 	        return todo;
 	      });
 	    default:
-	      return state;
+	      return state
 	  }
 	}
 
-	var todoApp = (0, _redux.combineReducers)({
-	  visibilityFilter: visibilityFilter,
-	  todos: todos
+	const todoApp = combineReducers({
+	  visibilityFilter,
+	  todos
 	});
 
-	exports.default = todoApp;
+	export default todoApp;
+	*/
 
 /***/ },
 /* 191 */
@@ -22027,42 +22041,73 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.addTodo = addTodo;
-	exports.toggleTodo = toggleTodo;
-	exports.setVisibilityFilter = setVisibilityFilter;
-	/*
-	 * action types
-	 */
-	var ADD_TODO = exports.ADD_TODO = 'ADD_TODO';
-	var TOGGLE_TODO = exports.TOGGLE_TODO = 'TOGGLE_TODO';
-	var SET_VISIBILITY_FILTER = exports.SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER';
 
-	/*
-	 * other constants
-	 */
-	var VisibilityFilters = exports.VisibilityFilters = {
-	  SHOW_ALL: 'SHOW_ALL',
-	  SHOW_COMPLETED: 'SHOW_COMPLETED',
-	  SHOW_ACTIVE: 'SHOW_ACTIVE'
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	var todo = function todo(state, action) {
+	  switch (action.type) {
+	    case 'ADD_TODO':
+	      return {
+	        id: action.id,
+	        text: action.text,
+	        completed: false
+	      };
+	    case 'TOGGLE_TODO':
+	      if (state.id !== action.id) {
+	        return state;
+	      }
+
+	      return Object.assign({}, state, {
+	        completed: !state.completed
+	      });
+	    default:
+	      return state;
+	  }
 	};
 
-	/*
-	 * action creators
-	 */
-	function addTodo(text) {
-	  return { type: ADD_TODO, text: text };
-	}
+	var todos = function todos() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	  var action = arguments[1];
 
-	function toggleTodo(index) {
-	  return { type: TOGGLE_TODO, index: index };
-	}
+	  switch (action.type) {
+	    case 'ADD_TODO':
+	      return [].concat(_toConsumableArray(state), [todo(undefined, action)]);
+	    case 'TOGGLE_TODO':
+	      return state.map(function (t) {
+	        return todo(t, action);
+	      });
+	    default:
+	      return state;
+	  }
+	};
 
-	function setVisibilityFilter(filter) {
-	  return { type: SET_VISIBILITY_FILTER, filter: filter };
-	}
+	exports.default = todos;
 
 /***/ },
 /* 192 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var visibilityFilter = function visibilityFilter() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? 'SHOW_ALL' : arguments[0];
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'SET_VISIBILITY_FILTER':
+	      return action.filter;
+	    default:
+	      return state;
+	  }
+	};
+
+	exports.default = visibilityFilter;
+
+/***/ },
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22075,15 +22120,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Footer = __webpack_require__(193);
+	var _Footer = __webpack_require__(194);
 
 	var _Footer2 = _interopRequireDefault(_Footer);
 
-	var _AddTodo = __webpack_require__(196);
+	var _AddTodo = __webpack_require__(198);
 
 	var _AddTodo2 = _interopRequireDefault(_AddTodo);
 
-	var _VisibleTodoList = __webpack_require__(197);
+	var _VisibleTodoList = __webpack_require__(199);
 
 	var _VisibleTodoList2 = _interopRequireDefault(_VisibleTodoList);
 
@@ -22102,7 +22147,7 @@
 	exports.default = App;
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22115,7 +22160,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _FilterLink = __webpack_require__(194);
+	var _FilterLink = __webpack_require__(195);
 
 	var _FilterLink2 = _interopRequireDefault(_FilterLink);
 
@@ -22150,7 +22195,7 @@
 	exports.default = Footer;
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22161,9 +22206,9 @@
 
 	var _reactRedux = __webpack_require__(168);
 
-	var _actions = __webpack_require__(191);
+	var _actions = __webpack_require__(196);
 
-	var _Link = __webpack_require__(195);
+	var _Link = __webpack_require__(197);
 
 	var _Link2 = _interopRequireDefault(_Link);
 
@@ -22188,7 +22233,62 @@
 	exports.default = FilterLink;
 
 /***/ },
-/* 195 */
+/* 196 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.addTodo = addTodo;
+	exports.toggleTodo = toggleTodo;
+	exports.setVisibilityFilter = setVisibilityFilter;
+	/*
+	 * action types
+	 */
+	var ADD_TODO = exports.ADD_TODO = 'ADD_TODO';
+	var TOGGLE_TODO = exports.TOGGLE_TODO = 'TOGGLE_TODO';
+	var SET_VISIBILITY_FILTER = exports.SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER';
+
+	/*
+	 * other constants
+	 */
+	var VisibilityFilters = exports.VisibilityFilters = {
+	  SHOW_ALL: 'SHOW_ALL',
+	  SHOW_COMPLETED: 'SHOW_COMPLETED',
+	  SHOW_ACTIVE: 'SHOW_ACTIVE'
+	};
+
+	/*
+	 * action creators
+	 */
+	var nextTodoId = 0;
+
+	function addTodo(text) {
+	  return {
+	    type: ADD_TODO,
+	    id: nextTodoId++,
+	    text: text
+	  };
+	};
+
+	function toggleTodo(index) {
+	  return {
+	    type: TOGGLE_TODO,
+	    index: index
+	  };
+	};
+
+	function setVisibilityFilter(filter) {
+	  return {
+	    type: SET_VISIBILITY_FILTER,
+	    filter: filter
+	  };
+	};
+
+/***/ },
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22237,7 +22337,7 @@
 	exports.default = Link;
 
 /***/ },
-/* 196 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22252,7 +22352,7 @@
 
 	var _reactRedux = __webpack_require__(168);
 
-	var _actions = __webpack_require__(191);
+	var _actions = __webpack_require__(196);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22266,7 +22366,7 @@
 	    null,
 	    _react2.default.createElement(
 	      'form',
-	      { onSubmiti: function onSubmiti(e) {
+	      { onSubmit: function onSubmit(e) {
 	          e.preventDefault();
 	          if (!input.value.trim()) {
 	            return;
@@ -22291,7 +22391,7 @@
 	exports.default = AddTodo;
 
 /***/ },
-/* 197 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22302,9 +22402,9 @@
 
 	var _reactRedux = __webpack_require__(168);
 
-	var _actions = __webpack_require__(191);
+	var _actions = __webpack_require__(196);
 
-	var _TodoList = __webpack_require__(198);
+	var _TodoList = __webpack_require__(200);
 
 	var _TodoList2 = _interopRequireDefault(_TodoList);
 
@@ -22344,7 +22444,7 @@
 	exports.default = VisibleTodoList;
 
 /***/ },
-/* 198 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22359,7 +22459,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Todo = __webpack_require__(199);
+	var _Todo = __webpack_require__(201);
 
 	var _Todo2 = _interopRequireDefault(_Todo);
 
@@ -22395,7 +22495,7 @@
 	exports.default = TodoList;
 
 /***/ },
-/* 199 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

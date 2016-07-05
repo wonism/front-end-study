@@ -17,15 +17,27 @@ export const VisibilityFilters = {
 /*
  * action creators
  */
+let nextTodoId = 0;
+
 export function addTodo(text) {
-  return { type: ADD_TODO, text };
+  return {
+    type: ADD_TODO,
+    id: nextTodoId++,
+    text
+  };
 };
 
 export function toggleTodo(index) {
-  return { type: TOGGLE_TODO, index };
+  return {
+    type: TOGGLE_TODO,
+    index
+  };
 };
 
 export function setVisibilityFilter(filter) {
-  return { type: SET_VISIBILITY_FILTER, filter };
+  return {
+    type: SET_VISIBILITY_FILTER,
+    filter
+  };
 };
 

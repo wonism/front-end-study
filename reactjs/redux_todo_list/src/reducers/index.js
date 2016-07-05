@@ -1,4 +1,17 @@
 import { combineReducers } from 'redux';
+import todos from './todos';
+import visibilityFilter from './visibilityFilter';
+
+const todoApp = combineReducers({
+  todos,
+  visibilityFilter
+});
+
+export default todoApp;
+
+/***** before *****/
+/*
+import { combineReducers } from 'redux';
 import { ADD_TODO, TOGGLE_TODO, SET_VISIBILITY_FILTER, VisibilityFilters } from '../actions';
 const { SHOW_ALL } = VisibilityFilters;
 
@@ -41,4 +54,4 @@ const todoApp = combineReducers({
 });
 
 export default todoApp;
-
+*/
