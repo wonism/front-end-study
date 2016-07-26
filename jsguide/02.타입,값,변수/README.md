@@ -349,3 +349,312 @@ typeof B // object
 ```
 - 자바스크립트는 래퍼 객체를 필요에 따라 기본 타입으로 변환하며, S, N, B 는 값 s, n, b 처럼 작동한다.
 
+## 변경 불가능한 원시 타입과 변경 가능 객체 참조
+- 자바스크립트에서 원시 타입(undefined, null, 불린, 숫자, 문자열) 값과 객체 사이에는 큰 차이가 있다.
+  - 원시 타입은 수정할 수 없다.
+  - 원시 타입은 값으로 비교되며, 두 값은 같은 값이어야만 같다고 할 수 있다.
+  - 객체는 원시 타입과는 달리, 자신의 값을 변경할 수 있다.
+  - 객체는 값으로 비교되지 않고, 두 객체가 같은 프로퍼티와 값을 가지고 있어도 두 객체는 같지 않다.
+```js
+var o = { x: 1 };
+o.x = 2; // 프로퍼티의 값을 변경함으로써 객체를 변경한다.
+o.y = 3; // 새 프로퍼티를 추가함으로써 객체를 변경한다.
+
+var a = [1, 2, 3];
+a[0] = [0]; // 배열의 원소 하나의 값을 바꾼다.
+a[3] = 4; // 배열의 원소를 하나 추가한다.
+```
+```js
+var o = { x: 1 }, p = { x: 1 };
+o === p // false
+var a = [], b = [];
+a === b // false
+```
+- 위에서 봤듯이, 객체를 변수에 할당하는 것은 단순히 참조를 할당하는 것이다. 이는 객체의 새로운 복사본을 생성하지 않는다.
+- 객체 혹은 배열의 새로운 복사본을 만들고 싶다면, 명시적으로 객체 프로퍼티 또는 배열의 원소를 복사해야 한다.
+- 다음은 iteration 으로 배열의 원소를 복사하는 예제이다.
+```js
+var a = ['a', 'b', 'c'];
+var b = [];
+
+for (var i = 0, len = a.length; i < len; i++) {
+  b[i] = a[i];
+}
+```
+- 다음은 두 다른 배열을 서로 비교하는 함수이다.
+```js
+function equalArrays(a, b) {
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  for (var i = 0, len = a.length; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+```
+
+__+ Object 복사하기__
+- 다음과 같은 방식으로 Object 를 복사하면, 객체를 참조하는 복사가 된다.
+```js
+var foo = { key: 'Copy an Object !' };
+var bar = foo;
+```
+- 예제를 통해 얕은 복사 (Shallow Copy), 깊은 복사(Deep Copy) 를 구현하고자 한다.
+```js
+/***** Shallow Copy *****/
+function copyObject(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  } else {
+    var copiedObj = obj.constructor();
+
+    for (var prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        copiedObj[prop] = obj[prop];
+      }
+    }
+
+    return copiedObj;
+  }
+}
+
+var foo = { key: 'value' };
+var bar = copyObject(foo);
+
+foo.key = 'other value';
+
+console.log(foo); // Object {key: "value"}
+console.log(bar); // Object {key: "other value"}
+```
+- 위와 같이, 인자가 null 이 아닌 객체일 경우, constructor() 메소드로 해당 객체와 똑같은 객체를 생성한다.
+- 그리고, hasOwnProperty() 메소드로 해당 객체가 인자로 넘긴 프로퍼티를 가지고 있는지 체크하고, 이에 맞는 프로퍼티에 같은 값을 할당한다.
+- lodash (혹은 underscore) 로는 더욱 간단히 구현할 수 있다.
+```js
+/***** Shallow Copy - with lodash *****/
+var foo = { key: 'value' };
+var bar = _.clone(foo);
+
+foo.key = 'other value';
+
+console.log(foo); // Object {key: "value"}
+console.log(bar); // Object {key: "other value"}
+```
+```js
+/***** Deep Copy *****/
+function copyObject(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  } else {
+    var copiedObj = obj.constructor();
+
+    for (var prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        copy[prop] = copyObject(obj[prop]);
+      }
+    }
+
+    return copiedObj;
+  }
+}
+
+var foo = {
+  deep: {
+    key: 'value'
+  },
+  shallow: false
+};
+
+var bar = copyObject(foo);
+foo.deep.key = 'other value';
+
+console.log(foo); // Object {deep: Object, shallow: false} * foo.deep.key = 'ohter value'
+console.log(bar); // Object {deep: Object, shallow: false} * bar.deep.key = 'value'
+```
+
+## 타입 변환
+<table>
+<thead>
+<tr><th rowspan="2">값</th><th colspan="4">변환된 값</th></tr>
+<tr><th>String</th><th>Number</th><th>Boolean</th><th>Object</th></tr>
+</thead>
+<tbody>
+<tr><td>undefined</td><td>"undefined"</td><td>NaN</td><td>false</td><td>TypeError 예외 발생</td></tr>
+<tr><td>null</td><td>"null"</td><td>0</td><td>false</td><td>TypeError 예외 발생</td></tr>
+<tr><td>true</td><td>"true"</td><td>1</td><td></td><td>new Boolean(true)</td></tr>
+<tr><td>false</td><td>"false"</td><td>0</td><td></td><td>new Boolean(false)</td></tr>
+<tr><td>""</td><td></td><td>0</td><td>false</td><td>new String("")</td></tr>
+<tr><td>"1.2"</td><td></td><td>1.2</td><td>true</td><td>new String("1.2")</td></tr>
+<tr><td>"one"</td><td></td><td>NaN</td><td>true</td><td>new String("one")</td></tr>
+<tr><td>0</td><td>"0"</td><td></td><td>false</td><td>new Number(0)</td></tr>
+<tr><td>-0</td><td>"-0"</td><td></td><td>false</td><td>new Number(-0)</td></tr>
+<tr><td>NaN</td><td>"NaN"</td><td></td><td>false</td><td>new Number(NaN)</td></tr>
+<tr><td>Infinity</td><td>"Infinity"</td><td></td><td>true</td><td>new Number(Infinity)</td></tr>
+<tr><td>-Infinity</td><td>"-Infinity"</td><td></td><td>true</td><td>new Number(-Infinity)</td></tr>
+<tr><td>1</td><td>"1"</td><td></td><td>true</td><td>new Number(1)</td></tr>
+<tr><td>{}</td><td>"[object Object]"</td><td>NaN</td><td>true</td><td></td></tr>
+<tr><td>[]</td><td>""</td><td>0</td><td>true</td><td></td></tr>
+<tr><td>[9]</td><td>"9"</td><td>9</td><td>true</td><td></td></tr>
+<tr><td>['a']</td><td>"a"</td><td>NaN</td><td>true</td><td></td></tr>
+<tr><td>function() {}</td><td>"function() {}"</td><td>NaN</td><td>true</td><td></td></tr>
+</tbody>
+</table>
+
+### 변환과 동치
+- 자바스크립트는 값의 타입을 유연하게 변경할 수 있는데, 마찬가지로 동치 연산자 == 도 유연하게 작용한다.
+  - 보다 엄격하게 값이 같은지를 판단하려면 자료형 변환을 수행하지 않는 === 연산자를 사용한다.
+```js
+null == undefined // true
+"0" == 0 // true >> 비교하기 전에 숫자로 변환된다.
+0 == false // true >> 불린은 비교하기 전에 숫자로 변환된다.
+"0" == false // true >> 두 피연산자는 비교하기 전에 숫자로 변환된다.
+```
+
+### 명시적 변환
+- 자바스크립트는 많은 형 변환을 자동으로 수행하지만, 명시적 변환이
+  필요할 때도 있다.
+- 명시적으로 타입 변환을 수행하는 가장 간단한 방법은 Boolean(), Number(), String(), Object() 함수를 사용하는 것이다.
+  - new 없이 호출되면, 이 함수들은 변환 함수로 작동한다.
+```js
+Number('3'); // 3
+String(false); // 'false'
+Boolean([ ]); // true
+Object(3); // new Number(3) 의 결과와 같다.
+
+/***** Other Ways *****/
+'3' * 1 // 3
+'3' << 0 // 3
++'3' // 3
+parseInt('3') // 3
+
+'' + 5 // '5'
+
+!![ ] // true
+!!undefined // false
+
+/***** 한 가지 더 *****/
++new Date(); // 13 자리 숫자
++new String('123'); // 123
+```
+- null 과 undefined 를 제외한 모든 값은 toString() 메소드를 가지며, 이 메소드의 결과는 보통 String() 함수가 반환하는 값과 같다.
+  - null 과 undefined 를 객체로 변환하려고 하면, TypeError 가 발생한다. 하지만, Object() 함수는 예외를 발생시키지 않으며, 대신 빈 객체를 반환한다.
+- 어떤 자바스크립트 연산자는 암시적(implicit) 타입 변환을 수행하므로 종종 타입 변환 목적으로 사용된다.
+  - + 연산자는 한 피연산자가 문자열이면, 다른 피연산자를 문자열로 변환한다.
+  - 단항 연산자 + 는 피연산자를 숫자로 변환한다.
+  - 단항 연산자 ! 는 피연산자를 불린으로 변환한 뒤, 부정 연산을 한다.
+```js
+x + '' // String(x)
++x // Number(x)
+!!x // Boolean(x)
+```
+- 자바스크립트는 숫자를 문자로 변환하거나 문자를 숫자로 변환할 때, 결과 값의 형태를 좀 더 자세히 표현할 수 있는 함수와 메소드를 지원한다.
+  - Number 클래스에 정의된 toString() 메소드는 기수(radix) 를 정하는 선택적 인자를 받는다. 이 인자들을 전달하지 않으면 기수를 10으로 하여 변환을 수행한다.
+    - 2 에서 36 까지의 값을 전달하면 해당 숫자를 기수로 하여 변환한다.
+```js
+var n = 17;
+binaryString = n.toString(2); // '10001'
+octalString = '0' + n.toString(8); // '021'
+hexString = '0x' + n.toString(16); // '0x11'
+```
+  - 금융 또는 과학적인 데이터를 문자열로 변환하는 경우, 소수점 이하 자릿수를 제어하거나, 지수 표기법(exponential notation) 을 사용하고 싶을 수도 있다. Number 클래스는 그런 용도에 맞는 세 가지 메소드를 제공한다.
+    - toFixed() 메소드는 결과 문자열의 소수점 이하 자릿수 개수를 인자만큼 맞춘 문자열을 반환한다.
+    - toExponential() 메소드는 지수 표기법을 사용하여 소수점 앞에 숫자 하나와 소수점 뒤에 인자로 지정한 만큼의 자릿수를 놓는 방식의 숫자를 문자열로 변환한다.
+    - toPrecision() 메소드는 우리가 정의한 유효 자릿수로 숫자를 문자열로 변환한다.
+    - toPrecision() 은 유효 자릿수가 숫자 전체 정수 부분을 표시할 정도로 크지 않다면 지수 표기법을 사용한다.
+    - 위 메소드들은 결과 문자열 내에서 나머지 숫자들을 반올림하거나, 0 을 붙인다.
+```js
+var n = 123456.789;
+n.toFixed(0); // '123457'
+n.toFixed(2); // '123456.79'
+n.toFixed(5); // '123456.78900'
+n.toExponential(1); // '1.2e+5'
+n.toExponential(3); // '1.234e+5'
+n.toPrecision(4); // '1.234e+5'
+n.toPrecision(7); // '123456.8'
+n.toPrecision(10); // '123456.7890'
+```
+- 우리가 문자열을 Number() 변환 함수의 인자로 넘긴다면, 변환 함수는 문자열을 정수 혹은 실수 리터럴로 해석할 것이다.
+  - Number() 함수는 10 진수 정수만 처리할 수 있고, 그 뒤에 숫자가 아닌 문자가 오는 것을 허용하지 않는다.
+  - 반면, parseInt() 와 parseFloat() 함수는 리터럴의 일부가 숫자가 아니어도 된다.
+    - 이 두 함수는 Number 클래스의 메소드가 아닌 전역 함수이다.
+    - 두 함수는 모두 앞부분의 빈 공백을 무시하고, 숫자 다음에 나오는 숫자 아닌 문자들도 무시한다.
+    - 첫 번째 공백이 아닌 문자가 유효한 숫자 리터럴이 아니면, NaN 을 반환한다.
+    - parseInt() 는 정수만 변환할 수 있지만, parseFloat() 은 정수와 부동소수점 모두 변환할 수 있다.
+    - 만약 문자열이 '0x' 나 '0X' 로 시작하면, parseInt() 는 문자열을 16 진수 숫자로 인식한다.
+```js
+parseInt('3 blind mice'); // 3
+parseFloat(' 3.14 meters'); // 3.14
+parseInt('-12.34'); // -12
+parseInt('0xFF'); // 255
+parseInt('0xff'); // 255
+parseInt('-0XFF'); // -255
+parseFloat('.1'); // 0.1
+parseInt('0.1'); // 0
+parseInt('.1'); // NaN : 정수는 . 로 시작할 수 없다.
+parseFloat('$72.47'); // NaN : 숫자는 $ 로 시작할 수 없다.
+```
+
+### 객체에서 원시 타입으로 변환
+- 객체에서 불린으로 변환하는 것은 간단하다.
+- 객체에서 문자열이나 숫자로의 변환은 변환될 객체의 메소드를 호출함으로써 수행된다.
+  - 이 과정은 객체가 변환을 수행하는 두 개의 서로 다른 메소드를 가지고 있기 때문에 다소 복잡하다.
+- 모든 객체는 두 개의 타입 변환 메소드를 상속한다.
+  - 먼저 알아볼, toString() 메소드는 객체를 문자열로 표현하여 반환한다.
+```js
+({ x: 1, y: 2 }).toString(); // "[object Object]"
+```
+    - 많은 클래스들이 toString() 메소드를 재정의한다.
+    - Array.prototype.toString() 은 각 원소를 문자열로 변환하고, 원소 사이에 쉼표를 삽입하여 이어붙인 문자열을 반환한다.
+    - Function.prototype.toString() 은 함수의 내부 표현형을 반환한다.
+    - Date.prototype.toString() 은 포맷팅된 날짜를 반환한다.
+    - RegExp.prototype.toString() 은 RegExp 객체를 RegExp 리터럴처럼 보이는 문자열을 반환한다.
+```js
+[1, 2, 3].toString(); // '1,2,3'
+(function (x) { f(x); }).toString(); // "function (x) { f(x); }"
+/\d+/g.toString(); // '/\\d+/g'
+new Date(2010, 0, 1). toString(); // 'Fri Jan 01 2010 00:00:00 GMT+0900 (KST)'
+```
+  - valueOf() 메소드는 객체를 잘 표현하는 원시 타입 값을 반환한다.
+    - 기본적으로 valueOf() 메소드는 원시 타입을 반환하지 않고 단순히 객체 그 자신을 반환한다.
+    - 래퍼 클래스는 래핑된 원시 타입의 값을 반환하는 valueOf() 메소드를 정의한다.
+    - 배열, 함수, 정규 표현식은 단순히 기본 메소드를 상속하며, valueOf() 를 호출하면 단순히 객체 그 자체를 반환한다.
+    - Date.prototype.valueOf() 메소드는 객체 내부적으로 날짜를 표현하기 위해 쓰는 값(현재 시각과 1970-01-01 의 차를 ms 로 표현한 값. 흔히 말하는 timestamp) 를 반환한다.
+- toString() 과 valueOf() 메소드를 통해 객체에서 문자열로, 그리고 객체에서 숫자로의 변환을 할 수 있다.
+- 하지만, 자바스크립트가 객체에서 원시 타입으로의 변환을 특수하게 처리하는 경우가 있다.
+- 자바스크립트는 아래의 절차를 통해 객체를 문자열로 변환한다.
+  - 1-1. 객체가 toString() 메소드를 가지고 있으면, 이를 호출한다.
+  - 1-2. toString() 이 원시값을 반환하면, 이 값을 문자열로 변환하여 반환한다.
+  - 2-1. 객체가 toString() 메소드를 가지고 있지 않거나, 이 메소드가 원시 타입 값을 반환하지 않는다면, 자바스크립트는 valueOf() 메소드를 찾는다.
+  - 2-2. valueOf() 메소드가 존재하면, 자바스크립트는 이 메소드를 호출한다.
+  - 2-3. valueOf() 가 원시값을 반환하면, 이 값을 문자열로 변환하여 반환한다.
+  - 3. 위 과정을 거쳤음에도 문자열을 반환받지 못한다면, 원시 타입 값을 얻을 수 없고, TypeError 가 발생한다.
+- 객체를 숫자로 전환할 때는 valueOf() 메소드를 먼저 호출한다.
+  - 1. 객체가 원시 타입의 값을 반환하는 valueOf() 메소드를 가지면, 반환된 값을 숫자로 변환하여 반환한다.
+  - 2. 그렇지 않으면, 객체가 원시 타입 값을 반환하는 toString() 메소드를 가지면, 이 값을 변환하여 반환한다.
+  - 3. 이 외의 경우, TypeError 가 발생한다.
+  - + 배열은 기본적으로 원시 타입 값 대신 객체를 반환하는 valueOf() 메소드를 상속하기 때문에, 배열에서 숫자로의 변환은 toString() 메소드에 의존한다.
+- + 연산자는 숫자 덧셈과 문자열 붙이기(concatenate) 를 수행한다.
+  - + 연산자의 피연산자 중 하나가 객체면, 자바스크립트는 객체를 다른 산술 연산처럼 객체에서 숫자로 변환하는 대신 객체에서 원시 타입으로 변환한다.
+  - == 동치 연산자도 비슷하다. 객체를 원시 타입과 비교할 때는, 객체를 원시 타입으로 변환한다.
+- + 와 == 연산자는 Date 타입 객체를 특별하게 취급한다.
+  - Date 클래스는 코어 자바스크립트에 포함된 타입 가운데 문자열로의 변환 절차와 숫자로의 변환 절차를 전부 구현하고 있는 유일한 타입이다.
+  - 기본적으로 객체에서 원시 타입으로의 변환은 객체에서 숫자로의 변환이고, 이때, valueOf() 를 먼저 사용한다.
+  - Date 객체에 한해서만 객체에서 문자열로 변환하며, 이때, toString() 을 먼저 사용한다.
+    - valueOf() 나 toString() 에서 반환된 원시 값은 숫자나 문자열로 변환되지 않고 바로 사용된다.
+  - < 연산자와 다른 관계 연산자들은 == 연산자처럼 객체에서 원시 타입으로의 변환을 수행하지만, Date 객체를 특별하게 취급하지는 않는다.
+    - valueOf() 를 먼저 시도하고, 그 뒤에 toString() 을 시도한다.
+    - 그 결과 값은 숫자나 문자열로 추가 변환 없이 바로 사용된다.
+  - +, ==, != 그리고 관계 연산자들만이 이런 문자열-원시 타입 변환을 수행한다. (다른 연산자들은 지정된 타입으로 명시적 변환을 하고, Date 를 위한 처리 절차도 없다.)
+```js
+/***** Date 객체와 연산자의 상호 작용 *****/
+var now = new Date();
+typeof (now + 1); // 'string' : + 는 객체에서 문자열로 변환시킨다.
+typeof (now - 1); // 'number' : - 는 객체에서 숫자로 변환시킨다.
+now == now.toString(); // true : 암시적 그리고 명확한 문자열 변환
+now > (now - 1); // true : > Date 에서 숫자로 변환
+```
+
