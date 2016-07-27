@@ -53,7 +53,7 @@ Math.E // 자연 로그 상수 e
 Math.sqrt(3) // 3 의 제곱근
 Math.sin(Math.PI / 2) // 1 이외 cos, tan 등의 삼각함수
 Math.log(10) // 자연 로그 10
-Math.log(512)/Math.LN2 // 9 밑이 2인 로그 512
+Math.log(512) / Math.LN2 // 9 밑이 2인 로그 512
 Math.exp(3) // Math.E 의 3 거듭제곱
 ```
 - 자바스크립트 산술 연산은 오버플로와 언더플로, 0 으로 나누는 에러를 발생시키지 않는다.
@@ -657,4 +657,182 @@ typeof (now - 1); // 'number' : - 는 객체에서 숫자로 변환시킨다.
 now == now.toString(); // true : 암시적 그리고 명확한 문자열 변환
 now > (now - 1); // true : > Date 에서 숫자로 변환
 ```
+
+## 변수 선언
+- 자바스크립트에서 변수를 사용하기 전에 변수 선언을 해야 한다.
+- 변수를 선언할 때에는 var 키워드를 이용한다.
+  - ES6 에서는 변수 선언 키워드로 let (변수), const (상수) 가 추가된다.
+```js
+var i;
+var sum;
+
+var j, total;
+
+var message = 'hello';
+var a = 1, b = 2, c = 3;
+```
+- var VARIABLE; 과 같이 변수에 초기값을 지정하지 않으면, 변수는 값이 설정될 때까지 undefined 가 된다.
+- var 문은 for 와 for/in iteration 에 올 수도 있다.
+```js
+for (var i = 0; i < 10; i++) { }
+for (var i = 0, j = 10; i < 10; i++, j--) { }
+for (var p in o) { }
+```
+- 자바스크립트는 변수에 숫자를 할당했다가 문자열을 할당해도 문제가 없다.
+```js
+var i = 10;
+i = 'ten';
+```
+
+### 반복된 선언과 생략된 선언
+- var 키워드를 통해 변수를 하나 이상 선언할 수 있다. 초기값이 부여된 경우, 선언문은 마치 대입문처럼 동작한다.
+- 선언하지 않은 변수를 읽으려하면, 자바스크립트는 에러를 발생시킨다.
+- ES5 의 strict 모드에서는 선언하지 않은 변수에 값을 넣으려해도 에러가 발생한다.
+- 비엄격 모드에서는 선언하지 않은 변수에 값을 할당하면, 그 변수는 미리 선언했던 전역 변수처럼 동작한다.
+
+## 변수의 유효범위 (Scope)
+- 변수의 유효범위는 변수가 정의되어 있는 영역을 말한다.
+- 전역 변수의 유효범위는 전역적이다. (자바스크립트 코드 전체에 걸쳐 정의되어 있다.)
+- 어떤 함수 안에서 선언된 변수는 오직 해당 함수 몸체 안에서만 정의되며, 이 변수를 지역 변수라고 한다.
+  - 유효범위도 지역적이다. 함수의 매개변수도 역시 지역 변수이며, 해당 함수 내부에서만 정의된다.
+```js
+var scope = 'global';
+
+function checkScope() {
+  var scope = 'local';
+  return scope; // 지역 변수 반환
+}
+
+checkScope(); // 'local'
+scope; // 'global'
+```
+- 전역 유효범위에서는 var 문을 사용하지 않고 전역 변수를 선언할 수 있지만, 지역 변수를 선언하기 위해서는 반드시 var 를 사용해야 한다.
+  - 예를 들어, 이런 일이 발생할 수 있다.
+```js
+scope = 'global';
+
+function checkScope2() {
+  scope = 'local';
+  myScope = 'local';
+  return [scope, myScope];
+}
+
+checkScope2(); // ['local', 'local'];
+scope; // 'local' : 전역 변수가 바뀌었다.
+myScope; // 'local'
+```
+- 함수 정의는 중첩될 수 있고, 각 함수에는 자신만의 유효범위가 있다.
+  - 지역 유효범위도 여러 단계로 중첩될 수 있다.
+```js
+var scope = 'global scope'; // 전역 변수
+function checkScope() {
+  var scope = 'local scope'; // 지역 변수
+  funcion nested() {
+    var scope = 'nested scope'; // 함수 안에 포함된 유효범위의 지역 변수
+    return scope; // 'nested scope'
+  }
+
+  return nested(); // 'nested scope'
+}
+
+checkScope(); // 'nested scope'
+```
+
+### 함수 유효범위와 끌어올림 (hoisting)
+- var 는 블록 유효범위가 아닌 함수 유효범위의 개념이 적용된다.
+- let 과 const 는 블록 유효범위를 가진다.
+- 변수는 해당 변수가 정의된 함수 안에서 유효범위를 가지며, 해당 함수 안에 중첩된 함수 안에서도 사용될 수 있다.
+- 다음 두 코드는 var 와 let 의 차이를 볼 수 있는 코드이다.
+```js
+var i = 0;
+if (true) {
+  var j = 0;
+
+  for (var k = 0; k < 1; k++) {
+    console.log(i, j, k); // 0, 0, 0
+  }
+
+  console.log(i, j, k); // 0, 0, 1
+}
+
+console.log(i, j, k); // 0, 0, 1
+// i, j, k 모두 함수 스코프 안에 정의되어 있다.
+```
+```js
+let i = 0;
+if (true) {
+  let j = 0;
+
+  for (let k = 0; k < 1; k++) {
+    console.log(i, j, k); // 0, 0, 0
+  }
+
+  console.log(i, j); // 0, 0
+  // k is not defined.
+}
+
+console.log(i); // 0
+// j is not defined.
+```
+
+- 자바스크립트의 함수 스코프는, '어떤 함수 안에 선언된 모든 변수는 그 함수 전체에 걸쳐 유효하다'는 의미이다.
+  - 이는 변수가 선언되기 전에도 유효하다는 뜻이기도 하다.
+  - 이러한 자바스크립트의 특징은 비공식적으로 끌어올림 (hoisting) 이라고 알려져 있다.
+  - 함수 안에 있는 모든 변수를 함수 맨 꼭대기로 끌어올린 것처럼 (선언문만) 동작한다.
+  - 다음은 예제이다.
+```js
+var scope = 'global';
+
+function f() {
+  console.log(scope); // undefined : 지역 변수는 함수 전체에 걸쳐 정의되기 때문
+  var scope = 'local'; // 이 라인으로 인해, 같은 이름의 전역 변수는 함수 전체에서 이 지역 변수에 의해 감춰진다.
+  console.log(scope); // 'local'
+}
+// 이 f 함수는 f2 함수처럼 동작한다.
+
+function f2() {
+  var scope;
+  console.log(scope); // undefined
+  scope = 'local';
+  console.log(scope); // undefined
+}
+```
+
+### 프로퍼티로써의 변수
+- 전역 변수를 선언한다는 것은, 실제로는 전역 객체의 프로퍼티를 정의하는 것이다.
+- 변수를 선언하기 위해 var 를 사용하면, 생성된 프로퍼티는 수정 할 수 없고, delete 연산자로 소멸시킬 수 없다는 뜻이다.
+- 앞서 봤던 것처럼, 엄격 모드가 아닌 상황에서 선언하지 않은 변수에 값을 대입하려고 하면, 자바스크립트는 자동으로 전역 변수를 생성한다.
+  - 이런 식으로 생성된 변수는 전역 객체의 평범하고 수정 가능한 프로퍼티이며, 삭제도 가능하다.
+```js
+var trueVar = 1; // 올바르게 선언한 전역 변수로 삭제할 수 없다.
+falseVar = 2; // 삭제 가능한 전역 변수
+this.fakeVar2 = 3; // 삭제 가능한 전역 변수
+delete trueVar; // false : 변수는 삭제할 수 없다.
+delete falseVar; // true : 삭제된다.
+delete falseVar2; // true : 삭제된다.
+```
+- 자바스크립트 전역 변수는 전역 객체의 프로퍼티로, ECMAScript 명세에 규정되어 있다.
+  - 지역 변수에는 그런 규정이 없지만, 변수를 각 함수 호출과 연관된 객체의 프로퍼티로 생각해도 된다.
+  - ES3 명세는 이러한 객체를 '호출 객체 (call object)'라고 한다.
+  - ES5 명세는 이를 '선언적 환경 기록 (devclarative environment record)' 라고 한다.
+- 자바스크립트는 this 키워드로 전역 객체를 참조할 수 있도록 한다. 하지만, 지역 변수가 저장된 객체를 참조할 방법은 제공하지 않는다.
+
+### 유효범위 체인
+- 자바스크립트는 언어적으로 유효범위를 가지고 있는 (lexically scoped) 언어이다.
+  - 전역 변수는 프로그램 전체에 걸쳐 유효하고, 지역 변수는 변수가 선언된 스코프에 걸쳐 유효하다.
+- 지역 변수를 객체의 프로퍼티로 생각한다면, 변수의 유효범위를 다른 관점으로 볼 수 있다.
+  - 자바스크립트의 코드는 전역 코드 혹은 함수와 연관된 유효범위 체인을 가진다.
+  - 이 유효범위 체인은 해당 코드의 범위 내 변수를 정의하는 객체의 체인. 즉, 리스트다.
+  - 자바스크립트가 변수 x 의 값을 얻어야 할 때, (식별자 해석(identifier resolution) 이라 일컫는 과정) 처음 체인에 있는 객체에서 x 를 찾는다.
+    - 만약 이 객체가 x 프로퍼티를 가지면, 그대로 사용한다.
+    - 이 객체에게 x 프로퍼티가 없다면, 체인에 있는 다음 객체에서 x 프로퍼티를 찾는다.
+    - 이런 과정을 반복하며, x 가 유효범위 체인 안에 있는 객체의 프로퍼티가 아니면, x 는 유효범위 안에 없는 것이고, ReferenceError 가 발생하게 된다.
+    - ES3 에서는 scope 프로퍼티가 가리키는 리스트 (스코프 체인)을 통해 수행되었다.
+    - ES5, ES6 에서는 identifier resolution 은 lexical environment 의 outer 값을 통해 수행된다.
+  - ES6 에 따르면, 현재 lexical environment 의 environment record 안의 값들을 찾는다.
+    - 존재하지 않으면, outer 가 참조하고 있는 lexical environment 의 environment record 안의 값들을 찾으며 이 과정은 반복된다.
+    - 즉, 기존의 스코프 체인 개념은 outer 체인으로 대체되었다.
+- 함수가 정의될 때, 함수는 유효범위 체인을 저장한다. 함수가 호출될 때, 해당 함수의 지역 변수를 저장하기 위해 새로운 객체를 하나 생성하고, 해당 객체를 기존에 저장된 유효범위 안에 추가한다.
+  - 중첩 함수의 경우에는 외부에서 함수를 호출할 때마다 중첩된 함수가 매번 선언된다.
+  - 이러한 이유로 함수를 호출할 때마다 유효범위 체인이 조금씩 달라진다.
 

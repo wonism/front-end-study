@@ -8,7 +8,7 @@
 __목차__
 - [01. 어휘구조](https://github.com/wonism/front-end-study/tree/master/jsguide/01.%EC%96%B4%ED%9C%98%EA%B5%AC%EC%A1%B0)
 - [02. 타입, 값, 변수](https://github.com/wonism/front-end-study/tree/master/jsguide/02.%ED%83%80%EC%9E%85%2C%EA%B0%92%2C%EB%B3%80%EC%88%98)
-- 03. 표현식과 연산자
+- [03. 표현식과 연산자](https://github.com/wonism/front-end-study/tree/master/jsguide/03.%E1%84%91%E1%85%AD%E1%84%92%E1%85%A7%E1%86%AB%E1%84%89%E1%85%B5%E1%86%A8%E1%84%80%E1%85%AA%E1%84%8B%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%8C%E1%85%A1)
 - 04. 문장
 - 05. 객체
 - 06. 배열
