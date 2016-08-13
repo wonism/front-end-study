@@ -6,9 +6,9 @@ __공부하고 있는 것들__
 - [PDF 파일 동적 생성](https://github.com/wonism/front-end-study/tree/master/pdfmake)
 
 __앞으로 공부하려는 것들__
+- typescript
 - es6
 - canvas
 - svg
 - webgl
 - webpack
-
