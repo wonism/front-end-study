@@ -7,6 +7,7 @@ __공부하고 있는 것들__
 - [Webpack](https://github.com/wonism/front-end-study/tree/master/webpack)
 
 __앞으로 공부하려는 것들__
+- typescript
 - es6
 - canvas
 - svg
