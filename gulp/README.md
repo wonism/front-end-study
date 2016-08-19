@@ -104,4 +104,20 @@ __task__
 - default : gulp 명령어만을 실행할 때 기본적으로 수행하는 태스크이다.
 
 ## Examples
+- [01.helloworld](https://github.com/wonism/front-end-study/tree/master/gulp/examples/01.helloworld)
+- [02.uglify](https://github.com/wonism/front-end-study/tree/master/gulp/examples/02.uglify)
+- [03.separate-tasks](https://github.com/wonism/front-end-study/tree/master/gulp/examples/03.separate-tasks)
+- [04.compile-coffee-script](https://github.com/wonism/front-end-study/tree/master/gulp/examples/04.compile-coffee-script)
+- [05.minify-css](https://github.com/wonism/front-end-study/tree/master/gulp/examples/05.minify-css)
+- [06.compile-sass](https://github.com/wonism/front-end-study/tree/master/gulp/examples/06.compile-sass)
+- [07.gulp-util](https://github.com/wonism/front-end-study/tree/master/gulp/examples/07.gulp-util)
+- [08.gulp-concat](https://github.com/wonism/front-end-study/tree/master/gulp/examples/08.gulp-concat)
+- [09.gulp-rename](https://github.com/wonism/front-end-study/tree/master/gulp/examples/09.gulp-rename)
+- [10.gulp-sourcemaps](https://github.com/wonism/front-end-study/tree/master/gulp/examples/10.gulp-sourcemaps)
+- [11.external-config-file](https://github.com/wonism/front-end-study/tree/master/gulp/examples/11.external-config-file)
+- [12.gulp-plumber](https://github.com/wonism/front-end-study/tree/master/gulp/examples/12.gulp-plumber)
+- [13.gulp-autoprefixer](https://github.com/wonism/front-end-study/tree/master/gulp/examples/13.gulp-autoprefixer)
+- [14.gulp-load-plugins](https://github.com/wonism/front-end-study/tree/master/gulp/examples/14.gulp-load-plugins)
+- [15.gulp-imagemin](https://github.com/wonism/front-end-study/tree/master/gulp/examples/15.gulp-imagemin)
+- [16.use-watch](https://github.com/wonism/front-end-study/tree/master/gulp/examples/16.use-watch)
 
