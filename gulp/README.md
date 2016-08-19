@@ -92,6 +92,7 @@ gulp.task('watch', function() {
 
 gulp.task('default', ['watch', 'scripts', 'sass', 'images']);
 ```
+
 __모듈__
 - gulp-coffee : coffee script 를 컴파일 해주는 npm plug-in
 - gulp-concat : 여러 파일을 이어주는 npm plug-in
@@ -99,6 +100,7 @@ __모듈__
 - gulp-sourcemaps : 변환된 ES5 코드와 원래의 ES2015 코드를 매핑해주는
   Source map 파일을 만들어준다.
 - gulp-imagemin : Image 사이즈를 줄여준다.
+
 __task__
 - watch : 변화를 감지한다. gulp &minus;w 를 통해 실행한다.
 - default : gulp 명령어만을 실행할 때 기본적으로 수행하는 태스크이다.
